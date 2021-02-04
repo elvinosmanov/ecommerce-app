@@ -11,6 +11,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
+        accentColor: Color(0xFFFF1E00),
         textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
       ),
       home: LandingPage(),
