@@ -1,4 +1,7 @@
-import 'package:ecommmerce_app/widgets/bottom_tabs.dart';
+import 'package:ecommmerce_app/ui/screens/tabs/home_tab.dart';
+import 'package:ecommmerce_app/ui/screens/tabs/saved_tab.dart';
+import 'package:ecommmerce_app/ui/screens/tabs/search_tab.dart';
+import 'package:ecommmerce_app/ui/widgets/bottom_tabs.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -37,15 +40,9 @@ class _HomePageState extends State<HomePage> {
             });
           },
           children: [
-            Container(
-              child: Center(child: Text('HomePage')),
-            ),
-            Container(
-              child: Center(child: Text('SearchPage')),
-            ),
-            Container(
-              child: Center(child: Text('SavedPage')),
-            ),
+            HomeTab(),
+            SearchTab(),
+            SavedTab(),
           ],
         )),
         Container(

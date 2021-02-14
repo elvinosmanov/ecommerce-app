@@ -1,8 +1,7 @@
 import 'package:ecommmerce_app/constants.dart';
-import 'package:ecommmerce_app/models/product.dart';
-import 'package:ecommmerce_app/screens/product_page.dart';
-import 'package:ecommmerce_app/services/firebase_services.dart';
-import 'package:ecommmerce_app/widgets/custom_action_bar.dart';
+import 'package:ecommmerce_app/core/services/firebase_services.dart';
+import 'package:ecommmerce_app/ui/screens/product_page.dart';
+import 'package:ecommmerce_app/ui/widgets/custom_action_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -21,12 +20,9 @@ class HomeTab extends StatelessWidget {
               );
             }
             if (snapshot.connectionState == ConnectionState.done) {
-              List<Product> productList = snapshot.data.docs.map((document) {
-                return Product.fromMap(document);
-              });
               return ListView(
                 padding: EdgeInsets.only(top: 100.0),
-                children: productList.map(
+                children: snapshot.data.docs.map(
                   (document) {
                     return GestureDetector(
                       onTap: () {
