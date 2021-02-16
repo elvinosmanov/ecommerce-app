@@ -1,10 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommmerce_app/core/models/cart.dart';
 import 'package:ecommmerce_app/core/models/product.dart';
 import 'package:ecommmerce_app/core/viewmodels/CRUDModelOfCart.dart';
 import 'package:ecommmerce_app/core/viewmodels/CRUDModelOfProduct.dart';
 import 'package:ecommmerce_app/ui/widgets/custom_action_bar.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
