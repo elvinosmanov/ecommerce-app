@@ -35,6 +35,10 @@ abstract class Api {
   Future<void> updateDocument(Map data, String id) {
     return ref.doc(id).update(data);
   }
+
+  Stream<User> userAsStream() {
+    return _auth.authStateChanges();
+  }
 }
 
 class ProductApi extends Api {

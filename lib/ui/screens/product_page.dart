@@ -1,17 +1,15 @@
 import 'package:ecommmerce_app/constants.dart';
 import 'package:ecommmerce_app/core/services/firebase_services.dart';
+import 'package:ecommmerce_app/core/viewmodels/my_provider.dart';
 import 'package:ecommmerce_app/ui/widgets/custom_action_bar.dart';
 import 'package:ecommmerce_app/ui/widgets/custom_button.dart';
 import 'package:ecommmerce_app/ui/widgets/image_swipe.dart';
 import 'package:ecommmerce_app/ui/widgets/product_size.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProductPage extends StatefulWidget {
-  final Map productData;
-  final String productId;
-
-  const ProductPage({Key key, this.productId, this.productData})
-      : super(key: key);
+  const ProductPage({Key key}) : super(key: key);
 
   @override
   _ProductPageState createState() => _ProductPageState();
@@ -19,49 +17,40 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage> {
   FirebaseServices _firebaseServices = FirebaseServices();
-  bool _addToCartBtnLoading = false;
-
-  String selectedSize;
-  List productSizeList;
-  List imageList;
+  String selectedSize = "0";
   bool hasAddedToCart = false;
-  @override
-  void initState() {
-    productSizeList = widget.productData['size'];
-    imageList = widget.productData['images'];
-    selectedSize = productSizeList[0];
-
-    super.initState();
-  }
-
-  void addToCart() async {
-    setState(() {
-      _addToCartBtnLoading = true;
-    });
-    await _firebaseServices.usersRef
-        .doc(_firebaseServices.getUserId())
-        .collection('Cart')
-        .doc(widget.productId)
-        .set({"size": selectedSize});
-    setState(() {
-      _addToCartBtnLoading = false;
-    });
-  }
+  bool btnLoading = false;
 
   @override
   Widget build(BuildContext context) {
+    final myProvider = Provider.of<MyProvider>(context);
+
+    void addToCart() async {
+      setState(() {
+        btnLoading = true;
+      });
+      await _firebaseServices.usersRef
+          .doc(_firebaseServices.getUserId())
+          .collection('Cart')
+          .doc(myProvider.product.id)
+          .set({"size": selectedSize});
+      setState(() {
+        btnLoading = false;
+      });
+    }
+
     return Scaffold(
         body: Stack(
       children: [
         ListView(children: [
           ImageSwipe(
-            imageList: imageList,
+            imageList: myProvider.product.images,
           ),
           Padding(
             padding: const EdgeInsets.only(
                 top: 24.0, left: 24.0, right: 24.0, bottom: 4.0),
             child: Text(
-              widget.productData['name'] ?? 'Product name',
+              myProvider.product.name ?? 'Product name',
               style: Constants.boldHeading,
             ),
           ),
@@ -69,7 +58,7 @@ class _ProductPageState extends State<ProductPage> {
             padding:
                 const EdgeInsets.symmetric(vertical: 4.0, horizontal: 24.0),
             child: Text(
-              '\$${widget.productData['price']}' ?? 'Product price',
+              '\$${myProvider.product.price}' ?? 'Product price',
               style: TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.w600,
@@ -81,7 +70,7 @@ class _ProductPageState extends State<ProductPage> {
             padding:
                 const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
             child: Text(
-              widget.productData['description'] ?? 'Description',
+              myProvider.product.description ?? 'Description',
               style: TextStyle(fontSize: 16.0),
             ),
           ),
@@ -91,8 +80,8 @@ class _ProductPageState extends State<ProductPage> {
             child: Text('Select Size', style: Constants.regularDarkText),
           ),
           ProductSize(
-            sizeList: productSizeList,
-            onSelected: (num) {
+            sizeList: myProvider.product.sizes,
+            onSelected: (String num) {
               selectedSize = num;
             },
           ),
@@ -121,7 +110,7 @@ class _ProductPageState extends State<ProductPage> {
                   child: Builder(
                     builder: (context) {
                       return CustomButton(
-                        isLoading: _addToCartBtnLoading,
+                        isLoading: btnLoading,
                         onPressed: () async {
                           addToCart();
                           Scaffold.of(context).showSnackBar(

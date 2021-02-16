@@ -27,6 +27,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // final myProvider = Provider.of<MyProvider>(context);
+    // myProvider.changeCartNum();
     return Scaffold(
         body: Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

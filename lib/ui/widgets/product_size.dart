@@ -12,10 +12,10 @@ class ProductSize extends StatefulWidget {
 
 class _ProductSizeState extends State<ProductSize> {
   int _selectedSize = 0;
+
   @override
   Widget build(BuildContext context) {
     List _sizeList = widget.sizeList ?? ['0'];
-
     return Padding(
       padding: const EdgeInsets.only(left: 20.0),
       child: Row(

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommmerce_app/core/models/cart.dart';
 import 'package:ecommmerce_app/core/services/api.dart';
 import 'package:ecommmerce_app/locator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
 class CRUDModelOfCart extends ChangeNotifier {
@@ -38,5 +39,9 @@ class CRUDModelOfCart extends ChangeNotifier {
     var result = await _api.addDocument(data.toJson());
 
     return result;
+  }
+
+  Stream<User> userAsStream() {
+    return _api.userAsStream();
   }
 }

@@ -1,8 +1,8 @@
 import 'package:ecommmerce_app/constants.dart';
-import 'package:ecommmerce_app/core/services/firebase_services.dart';
-import 'package:ecommmerce_app/ui/screens/cart_page.dart';
+import 'package:ecommmerce_app/core/navigator/generate_route.dart';
+import 'package:ecommmerce_app/core/viewmodels/my_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+import 'package:provider/provider.dart';
 
 class CustomActionBar extends StatefulWidget {
   final String title;
@@ -22,12 +22,10 @@ class CustomActionBar extends StatefulWidget {
 }
 
 class _CustomActionBarState extends State<CustomActionBar> {
-  FirebaseServices _firebaseServices = FirebaseServices();
-
-  int cartNum = 0;
-
   @override
   Widget build(BuildContext context) {
+    final _myProvider = Provider.of<MyProvider>(context);
+
     return Container(
       decoration: BoxDecoration(
           gradient: widget.hasBackground
@@ -68,43 +66,25 @@ class _CustomActionBarState extends State<CustomActionBar> {
             ),
           GestureDetector(
             onTap: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => CartPage()));
+              Navigator.pushNamed(context, GenerateRoute.cartPageRoute);
             },
             child: Container(
-              width: 42.0,
-              height: 42.0,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color:
-                    cartNum == 0 ? Colors.black : Theme.of(context).accentColor,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: StreamBuilder(
-                stream: _firebaseServices.usersRef
-                    .doc(_firebaseServices.getUserId())
-                    .collection('Cart')
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.active) {
-                    List documents = snapshot.data.docs;
-
-                    SchedulerBinding.instance
-                        .addPostFrameCallback((_) => setState(() {
-                              cartNum = documents.length;
-                            }));
-                  }
-
-                  return Text(
-                    '$cartNum',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16.0),
-                  );
-                },
-              ),
-            ),
+                width: 42.0,
+                height: 42.0,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: _myProvider.cartNum == 0
+                      ? Colors.black
+                      : Theme.of(context).accentColor,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${_myProvider.cartNum}',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16.0),
+                )),
           ),
         ],
       ),

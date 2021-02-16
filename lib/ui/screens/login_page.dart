@@ -1,4 +1,4 @@
-import 'package:ecommmerce_app/ui/screens/register_page.dart';
+import 'package:ecommmerce_app/core/navigator/generate_route.dart';
 import 'package:ecommmerce_app/ui/widgets/custom_button.dart';
 import 'package:ecommmerce_app/ui/widgets/custom_input.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -136,12 +136,8 @@ class _LoginPageState extends State<LoginPage> {
               child: CustomButton(
                 text: 'Create New Account',
                 onPressed: () {
-                  return Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => RegisterPage(),
-                    ),
-                  );
+                  return Navigator.pushNamed(
+                      context, GenerateRoute.registerPageRoute);
                 },
               ),
             ),

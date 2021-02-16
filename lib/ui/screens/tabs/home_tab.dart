@@ -1,18 +1,22 @@
 import 'package:ecommmerce_app/constants.dart';
-import 'package:ecommmerce_app/core/services/firebase_services.dart';
-import 'package:ecommmerce_app/ui/screens/product_page.dart';
+import 'package:ecommmerce_app/core/models/product.dart';
+import 'package:ecommmerce_app/core/navigator/generate_route.dart';
+import 'package:ecommmerce_app/core/viewmodels/CRUDModelOfProduct.dart';
+import 'package:ecommmerce_app/core/viewmodels/my_provider.dart';
 import 'package:ecommmerce_app/ui/widgets/custom_action_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 
 class HomeTab extends StatelessWidget {
-  final FirebaseServices _firebaseServices = FirebaseServices();
   @override
   Widget build(BuildContext context) {
+    final _provider = Provider.of<CRUDModelOfProduct>(context);
+    final myProvider = Provider.of<MyProvider>(context);
+
     return Stack(
       children: [
-        FutureBuilder<QuerySnapshot>(
-          future: _firebaseServices.producRef.get(),
+        FutureBuilder<List<Product>>(
+          future: _provider.fetchProducts(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return Container(
@@ -22,17 +26,14 @@ class HomeTab extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.done) {
               return ListView(
                 padding: EdgeInsets.only(top: 100.0),
-                children: snapshot.data.docs.map(
-                  (document) {
+                children: snapshot.data.map(
+                  (product) {
                     return GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ProductPage(
-                                      productId: document.id,
-                                      productData: document.data(),
-                                    )));
+                        myProvider.setProduct(product);
+
+                        Navigator.pushNamed(
+                            context, GenerateRoute.productPageRoute);
                       },
                       child: Container(
                         decoration: BoxDecoration(
@@ -49,7 +50,7 @@ class HomeTab extends StatelessWidget {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
                                 child: Image.network(
-                                  document.data()['images'][0],
+                                  product.images[0],
                                   fit: BoxFit.cover,
                                   loadingBuilder: (BuildContext context,
                                       Widget child,
@@ -92,13 +93,11 @@ class HomeTab extends StatelessWidget {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        document.data()['name'] ??
-                                            'Product Name',
+                                        product.name ?? 'Product Name',
                                         style: Constants.boldHeading,
                                       ),
                                       Text(
-                                        '\$${document.data()['price']}' ??
-                                            'Price',
+                                        '\$${product.price}' ?? 'Price',
                                         style: TextStyle(
                                           fontSize: 22.0,
                                           fontWeight: FontWeight.w600,

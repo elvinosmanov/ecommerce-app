@@ -1,15 +1,31 @@
 import 'package:ecommmerce_app/constants.dart';
+import 'package:ecommmerce_app/core/viewmodels/CRUDModelOfCart.dart';
+import 'package:ecommmerce_app/core/viewmodels/my_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'home_page.dart';
 import 'login_page.dart';
 
-class LandingPage extends StatelessWidget {
+class LandingPage extends StatefulWidget {
+  @override
+  _LandingPageState createState() => _LandingPageState();
+}
+
+class _LandingPageState extends State<LandingPage> {
+  bool firstTime = true;
+
   @override
   Widget build(BuildContext context) {
+    final _provider = Provider.of<CRUDModelOfCart>(context);
+    final myProvider = Provider.of<MyProvider>(context);
+    if (firstTime) {
+      myProvider.changeCartNum();
+      firstTime = false;
+    }
     return StreamBuilder(
-      stream: FirebaseAuth.instance.authStateChanges(),
+      stream: _provider.userAsStream(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return ErrorWidget(snapshot: snapshot);
