@@ -1,17 +1,15 @@
-import 'package:ecommmerce_app/screens/register_page.dart';
-import 'package:ecommmerce_app/widgets/custom_button.dart';
-import 'package:ecommmerce_app/widgets/custom_input.dart';
+import 'package:ecommmerce_app/constants.dart';
+import 'package:ecommmerce_app/ui/widgets/custom_button.dart';
+import 'package:ecommmerce_app/ui/widgets/custom_input.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../constants.dart';
-
-class LoginPage extends StatefulWidget {
+class RegisterPage extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   Future<void> _showAlertDialog(String error) async {
     return showDialog(
         barrierDismissible: false,
@@ -34,15 +32,15 @@ class _LoginPageState extends State<LoginPage> {
         });
   }
 
-  Future<String> _loginAccount() async {
+  Future<String> _createAccount() async {
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: _loginEmail, password: _loginPassword);
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: _registerEmail, password: _registerPassword);
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        return 'No user found for that email.';
-      } else if (e.code == 'wrong-password') {
-        return 'Wrong password provided for that user.';
+      if (e.code == 'weak-password') {
+        return 'The password provided is too weak.';
+      } else if (e.code == 'email-already-in-use') {
+        return 'The account already exists for that email.';
       }
       return e.message;
     } catch (e) {
@@ -51,32 +49,34 @@ class _LoginPageState extends State<LoginPage> {
     return null;
   }
 
-  void _loginForm() async {
+  void _submitForm() async {
     setState(() {
-      _loginFormLoading = true;
+      _registerFormLoading = true;
     });
-    String _result = await _loginAccount();
+    String _result = await _createAccount();
     if (_result != null) {
       _showAlertDialog(_result);
+    } else {
+      Navigator.pop(context);
     }
     setState(() {
-      _loginFormLoading = false;
+      _registerFormLoading = false;
     });
   }
 
-  bool _loginFormLoading = false;
-  String _loginEmail = '';
-  String _loginPassword = '';
-  FocusNode _loginFocusNode;
+  bool _registerFormLoading = false;
+  String _registerEmail = '';
+  String _registerPassword = '';
+  FocusNode _registerFocusNode;
   @override
   void initState() {
-    _loginFocusNode = FocusNode();
+    _registerFocusNode = FocusNode();
     super.initState();
   }
 
   @override
   void dispose() {
-    _loginFocusNode.dispose();
+    _registerFocusNode.dispose();
     super.dispose();
   }
 
@@ -93,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
             Container(
               padding: EdgeInsets.only(top: 24.0),
               child: Text(
-                'Welcome User,\nLogin to your Account',
+                'Create New Account',
                 textAlign: TextAlign.center,
                 style: Constants.boldHeading,
               ),
@@ -104,29 +104,29 @@ class _LoginPageState extends State<LoginPage> {
                   hintText: 'Email...',
                   textInputAction: TextInputAction.next,
                   onSubmitted: (value) {
-                    _loginFocusNode.requestFocus();
+                    _registerFocusNode.requestFocus();
                   },
                   onChanged: (value) {
-                    _loginEmail = value;
+                    _registerEmail = value;
                   },
                 ),
                 CustomInput(
                   hintText: 'Password...',
-                  focusNode: _loginFocusNode,
+                  focusNode: _registerFocusNode,
                   isPasswordField: true,
                   onChanged: (value) {
-                    _loginPassword = value;
+                    _registerPassword = value;
                   },
                   onSubmitted: (value) {
-                    _loginForm();
+                    _submitForm();
                   },
                 ),
                 CustomButton(
-                  text: 'Login',
-                  isLoading: _loginFormLoading,
+                  text: 'Create New Account',
+                  isLoading: _registerFormLoading,
                   outlineBtn: false,
                   onPressed: () {
-                    _loginForm();
+                    _submitForm();
                   },
                 )
               ],
@@ -134,15 +134,8 @@ class _LoginPageState extends State<LoginPage> {
             Padding(
               padding: const EdgeInsets.only(bottom: 16.0),
               child: CustomButton(
-                text: 'Create New Account',
-                onPressed: () {
-                  return Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => RegisterPage(),
-                    ),
-                  );
-                },
+                text: 'Back to Login',
+                onPressed: () => Navigator.pop(context),
               ),
             ),
           ],

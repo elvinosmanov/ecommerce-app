@@ -1,3 +1,4 @@
+import 'package:ecommmerce_app/constants.dart';
 import 'package:flutter/material.dart';
 
 class CustomInput extends StatelessWidget {
@@ -23,7 +24,8 @@ class CustomInput extends StatelessWidget {
         vertical: 8.0,
         horizontal: 24.0,
       ),
-      color: Color(0xFFF2F2F2),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12.0), color: Color(0xFFF2F2F2)),
       child: TextField(
         textInputAction: textInputAction,
         obscureText: isPasswordField,
