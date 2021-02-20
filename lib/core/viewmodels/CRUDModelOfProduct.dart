@@ -7,11 +7,9 @@ import 'package:flutter/cupertino.dart';
 
 class CRUDModelOfProduct extends ChangeNotifier {
   Api _api = locator<ProductApi>();
-  List<Product> products;
-
   Future<List<Product>> fetchProducts() async {
     var result = await _api.getDataCollection();
-    products =
+    var products =
         result.docs.map((doc) => Product.fromMap(doc.data(), doc.id)).toList();
     return products;
   }
@@ -43,5 +41,13 @@ class CRUDModelOfProduct extends ChangeNotifier {
 
   Stream<User> userAsStream() {
     return _api.userAsStream();
+  }
+
+  Future<List<Product>> searchProducts(String value) async {
+    var result = await _api.ref.orderBy("search_string").startAt(
+        [value.toLowerCase()]).endAt([value.toLowerCase() + '\uf8ff']).get();
+    var products =
+        result.docs.map((doc) => Product.fromMap(doc.data(), doc.id)).toList();
+    return products;
   }
 }
