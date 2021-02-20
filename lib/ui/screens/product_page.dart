@@ -20,11 +20,13 @@ class _ProductPageState extends State<ProductPage> {
   String selectedSize = "0";
   bool hasAddedToCart = false;
   bool btnLoading = false;
-
+  bool firstTime = true;
   @override
   Widget build(BuildContext context) {
     final myProvider = Provider.of<MyProvider>(context);
-
+    if (firstTime) {
+      selectedSize = myProvider.product.sizes[0];
+    }
     void addToCart() async {
       setState(() {
         btnLoading = true;
@@ -37,6 +39,14 @@ class _ProductPageState extends State<ProductPage> {
       setState(() {
         btnLoading = false;
       });
+    }
+
+    void addToSaved() async {
+      await _firebaseServices.usersRef
+          .doc(_firebaseServices.getUserId())
+          .collection('Saved')
+          .doc(myProvider.product.id)
+          .set({"size": selectedSize});
     }
 
     return Scaffold(
@@ -89,20 +99,29 @@ class _ProductPageState extends State<ProductPage> {
             padding: const EdgeInsets.only(bottom: 16.0),
             child: Row(
               children: [
-                GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    margin: EdgeInsets.only(left: 24),
-                    width: 65.0,
-                    height: 65.0,
-                    decoration: BoxDecoration(
-                      color: Color(0xFFDCDCDC),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    alignment: Alignment.center,
-                    child: Image.asset(
-                      'assets/images/tab_saved.png',
-                      height: 22.0,
+                Builder(
+                  builder: (context) => GestureDetector(
+                    onTap: () {
+                      addToSaved();
+                      Scaffold.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Saved successfully'),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(left: 24),
+                      width: 65.0,
+                      height: 65.0,
+                      decoration: BoxDecoration(
+                        color: Color(0xFFDCDCDC),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      alignment: Alignment.center,
+                      child: Image.asset(
+                        'assets/images/tab_saved.png',
+                        height: 22.0,
+                      ),
                     ),
                   ),
                 ),
@@ -115,7 +134,7 @@ class _ProductPageState extends State<ProductPage> {
                           addToCart();
                           Scaffold.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Saved successfully'),
+                              content: Text('Cart Added successfully'),
                             ),
                           );
                         },

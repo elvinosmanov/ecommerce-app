@@ -53,6 +53,14 @@ class CartApi extends Api {
             .collection('Cart'));
 }
 
+class SavedApi extends Api {
+  SavedApi()
+      : super(Api._db
+            .collection("Users")
+            .doc(Api._auth.currentUser.uid)
+            .collection('Saved'));
+}
+
 class UserApi extends Api {
   UserApi() : super(Api._db.collection("Users"));
 }

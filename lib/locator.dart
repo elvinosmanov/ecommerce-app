@@ -9,6 +9,7 @@ GetIt locator = GetIt.instance;
 
 setup() {
   locator.registerLazySingleton<ProductApi>(() => ProductApi());
+  locator.registerLazySingleton<SavedApi>(() => SavedApi());
   locator.registerLazySingleton<CartApi>(() => CartApi());
   locator.registerLazySingleton<UserApi>(() => UserApi());
   locator.registerLazySingleton<CRUDModelOfProduct>(() => CRUDModelOfProduct());

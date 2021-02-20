@@ -7,11 +7,17 @@ import 'package:flutter/cupertino.dart';
 
 class CRUDModelOfCart extends ChangeNotifier {
   Api _api = locator<CartApi>();
-
+  Api _savedApi = locator<SavedApi>();
   List<Cart> carts;
 
   Future<List<Cart>> fetchCarts() async {
     var result = await _api.getDataCollection();
+    carts = result.docs.map((doc) => Cart.fromMap(doc.data(), doc.id)).toList();
+    return carts;
+  }
+
+  Future<List<Cart>> fetchSaved() async {
+    var result = await _savedApi.getDataCollection();
     carts = result.docs.map((doc) => Cart.fromMap(doc.data(), doc.id)).toList();
     return carts;
   }
